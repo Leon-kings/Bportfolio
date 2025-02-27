@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
   res.status(200).json({ status: 'success', message: 'Welcome to my API' });
 });
 
-app.use('/messages', Message);
+app.use('/0998C28', Message);
 
 // Start the server
 app.listen(PORT, () => console.log(`App started on port ${PORT}`));
