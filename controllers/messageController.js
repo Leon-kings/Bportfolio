@@ -37,8 +37,8 @@ export const createMessage = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to send message.' });
   }
 };
-// get all user to one
-export const getOrder = async (req, res) => {
+// get all user to one/ To fetch one of the messages saved in the database
+export const getMessage = async (req, res) => {
   try {
     const booking = await Book.find();
     return res.status(200).json({
@@ -51,7 +51,7 @@ export const getOrder = async (req, res) => {
   }
 };
 
-// delete Order booking
+// delete Order messages saved here on database api 
 
 export const deleteOder = async (req, res) => {
   try {
@@ -63,7 +63,7 @@ export const deleteOder = async (req, res) => {
   }
 };
 
-//
+//get messages by ID from Database
 export const getOderById = async (req, res) => {
   try {
     const messages = await Book.findById(req.params.id);
@@ -78,7 +78,7 @@ export const getOderById = async (req, res) => {
     });
   }
 };
-
+// Update messages written by client
 export const updateOder = async (req, res) => {
   try {
     const message = await Book.findById({ _id: req.params.id });

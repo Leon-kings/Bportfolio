@@ -1,12 +1,18 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const { 
+  createMessage, 
+  deleteOder, 
+  getOderById, 
+  getMessage, 
+  updateOder 
+} = require('../controllers/messageController');
 
-const messageSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  message: { type: String, required: true },
-  date: { type: Date, default: Date.now }
-});
+const router = express.Router();
 
-const Message = mongoose.model('Message', messageSchema);
+router.get('/', getMessage);
+router.post('/', createMessage);
+router.get('/:id', getOderById);
+router.put('/:id', updateOder);
+router.delete('/:id', deleteOder);
 
-module.exports = Message;
+module.exports = router;
