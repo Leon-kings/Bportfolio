@@ -1,4 +1,3 @@
-// controllers/messageController.js
 const Message = require('../models/message');
 const nodemailer = require('nodemailer');
 
@@ -21,7 +20,7 @@ const sendEmail = async (name, email, message) => {
   await transporter.sendMail(mailOptions);
 };
 
-export const createMessage = async (req, res) => {
+const createMessage = async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
@@ -37,10 +36,11 @@ export const createMessage = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to send message.' });
   }
 };
-// get all user to one/ To fetch one of the messages saved in the database
-export const getMessage = async (req, res) => {
+
+// Get all messages
+const getMessage = async (req, res) => {
   try {
-    const booking = await Book.find();
+    const booking = await Message.find();
     return res.status(200).json({
       status: "success",
       message: "Messages fetched successfully",
@@ -51,11 +51,10 @@ export const getMessage = async (req, res) => {
   }
 };
 
-// delete Order messages saved here on database api 
-
-export const deleteOder = async (req, res) => {
+// Delete message by ID
+const deleteOder = async (req, res) => {
   try {
-    const booking = await Book.findByIdAndDelete(req.params.id);
+    const booking = await Message.findByIdAndDelete(req.params.id);
     if (!booking) throw Error("Messages not found");
     return res.json({ message: "Message deleted successfully" });
   } catch (error) {
@@ -63,10 +62,10 @@ export const deleteOder = async (req, res) => {
   }
 };
 
-//get messages by ID from Database
-export const getOderById = async (req, res) => {
+// Get message by ID
+const getOderById = async (req, res) => {
   try {
-    const messages = await Book.findById(req.params.id);
+    const messages = await Message.findById(req.params.id);
     res.status(200).json({
       status: "success",
       message: "message fetched successfully",
@@ -78,20 +77,21 @@ export const getOderById = async (req, res) => {
     });
   }
 };
-// Update messages written by client
-export const updateOder = async (req, res) => {
+
+// Update message by ID
+const updateOder = async (req, res) => {
   try {
-    const message = await Book.findById({ _id: req.params.id });
+    const message = await Message.findById({ _id: req.params.id });
     if (!message) {
       return res.status(404).json({
         status: "failed",
         message: "message not found",
       });
     }
-    const updatedOder = await Book.findByIdAndUpdate(req.params.id, {
+    const updatedOder = await Message.findByIdAndUpdate(req.params.id, {
       email: req.body.email,
       message: req.body.message
-    });
+    }, { new: true });
     res.status(200).json({
       message: "message updated successfully",
       updatedOder,
@@ -102,4 +102,12 @@ export const updateOder = async (req, res) => {
       message: err.message,
     });
   }
+};
+
+module.exports = {
+  createMessage,
+  getMessage,
+  deleteOder,
+  getOderById,
+  updateOder
 };
