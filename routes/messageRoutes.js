@@ -1,9 +1,12 @@
-// routes/messageRoutes.js
-import express from 'express';
-import { createMessage } from '../controllers/messageController.js';
+const mongoose = require('mongoose');
 
-const router = express.Router();
+const messageSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  message: { type: String, required: true },
+  date: { type: Date, default: Date.now }
+});
 
-router.post('/', createMessage);
+const Message = mongoose.model('Message', messageSchema);
 
-export default router;
+module.exports = Message;

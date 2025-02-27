@@ -1,25 +1,35 @@
-// index.js
-import 'dotenv/config';
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import messageRoutes from './routes/messageRoutes.js';
+const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const Message = require('./routes/messageRoutes');
+const cors = require('cors');
+
+dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-
-app.use(messageRoutes);
-
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(morgan('dev'));
+app.use(cors());
+
+// Database connection
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on =${PORT}`);
-    });
-  })
+  .connect(process.env.DB)
+  .then(() => console.log('Database connected'))
   .catch((err) => console.log(err));
+
+// Routes
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'success', message: 'Welcome to my API' });
+});
+
+app.use('/messages', Message);
+
+// Start the server
+app.listen(PORT, () => console.log(`App started on port ${PORT}`));
+
+module.exports = app;
