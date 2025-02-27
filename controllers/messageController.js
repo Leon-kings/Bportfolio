@@ -1,6 +1,6 @@
 // controllers/messageController.js
-import Message from '../models/message.js';
-import nodemailer from 'nodemailer';
+const Message = require('../models/message');
+const nodemailer = require('nodemailer');
 
 const sendEmail = async (name, email, message) => {
   const transporter = nodemailer.createTransport({
