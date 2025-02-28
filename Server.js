@@ -1,9 +1,9 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
-const morgan = require('morgan');
-const Message = require('./routes/messageRoutes');
-const cors = require('cors');
+import express from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+import cors from 'cors';
+import Message from './routes/messageRoutes.js';
 
 dotenv.config();
 
@@ -32,4 +32,5 @@ app.use('/0998C28', Message);
 // Start the server
 app.listen(PORT, () => console.log(`App started on port ${PORT}`));
 
-module.exports = app;
+// Exporting the app for testing or other purposes
+export default app;
