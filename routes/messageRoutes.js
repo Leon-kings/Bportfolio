@@ -4,6 +4,6 @@ const { createOrder } = require('../controllers/messageController.js'); // Destr
 const router = express.Router();
 
 // POST request to create a new message
-router.post('/message', createOrder);
+router.post('/', createOrder);
 
 module.exports = router;
