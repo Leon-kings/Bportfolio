@@ -6,7 +6,7 @@ const express = require('express');
 const Message = require('./routes/messageRoutes.js');
 
 dotenv.config();
-app.use()
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
