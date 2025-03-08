@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 app.use(cors());
-express.json()
+
 // Database connection
 mongoose
   .connect(process.env.DB)
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
   res.status(200).json({ status: 'success', message: 'Welcome to my API' });
 });
 
-app.use('/', Message);
+app.use('/0998C28', Message);
 
 // Start the server
 app.listen(PORT, () => console.log(`App started on port ${PORT}`));
