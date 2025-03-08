@@ -18,7 +18,7 @@ const createOrder = async (req, res) => {
   try {
     const newBooking = await Book.create({
       email: req.body.email,
-      message: req.body.message,
+      messages: req.body.messages,
       name: req.body.name,
     });
 
@@ -27,7 +27,7 @@ const createOrder = async (req, res) => {
       from: process.env.EMAIL_USER, // Replace with your email
       to: process.env.ADMIN_EMAIL, // Replace with admin email
       subject: "New Message Created",
-      text: `A new Message has been created.\nEmail: ${req.body.email}\nMessage: ${req.body.message}`,
+      text: `A new Message has been created.\nEmail: ${req.body.email}\nMessage: ${req.body.messages}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
