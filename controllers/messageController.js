@@ -1,4 +1,4 @@
-const Book = require("../models/message.js");
+const Message = require("../models/message.js");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 
@@ -13,10 +13,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Create Order booking
-const createOrder = async (req, res) => {
+// Create Message Messageing
+const createMessage = async (req, res) => {
   try {
-    const newBooking = await Book.create({
+    const newMessage = await Message.create({
       email: req.body.email,
       messages: req.body.messages,
       name: req.body.name,
@@ -41,42 +41,42 @@ const createOrder = async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "Message created successfully. See you in the upcoming 4 days.",
-      data: newBooking,
+      data: newMessage,
     });
   } catch (err) {
     return res.status(400).json({ status: "failed", message: err.message });
   }
 };
 
-// Get all Order bookings
-const getOrder = async (req, res) => {
+// Get all Message Messageings
+const getMessage = async (req, res) => {
   try {
-    const booking = await Book.find();
+    const Message = await Message.find();
     return res.status(200).json({
       status: "success",
       message: "Messages fetched successfully",
-      data: booking,
+      data: Message,
     });
   } catch (err) {
     return res.status(400).json({ status: "failed", message: err.message });
   }
 };
 
-// Delete Order booking
-const deleteOrder = async (req, res) => {
+// Delete Message Messageing
+const deleteMessage = async (req, res) => {
   try {
-    const booking = await Book.findByIdAndDelete(req.params.id);
-    if (!booking) throw Error("Message not found");
+    const Message = await Message.findByIdAndDelete(req.params.id);
+    if (!Message) throw Error("Message not found");
     return res.json({ message: "Message deleted successfully" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-// Get Order by ID
-const getOrderById = async (req, res) => {
+// Get Message by ID
+const getMessageById = async (req, res) => {
   try {
-    const messages = await Book.findById(req.params.id);
+    const messages = await Message.findById(req.params.id);
     res.status(200).json({
       status: "success",
       message: "Message fetched successfully",
@@ -89,17 +89,17 @@ const getOrderById = async (req, res) => {
   }
 };
 
-// Update Order
-const updateOrder = async (req, res) => {
+// Update Message
+const updateMessage = async (req, res) => {
   try {
-    const message = await Book.findById({ _id: req.params.id });
+    const message = await Message.findById({ _id: req.params.id });
     if (!message) {
       return res.status(404).json({
         status: "failed",
         message: "Message not found",
       });
     }
-    const updatedOrder = await Book.findByIdAndUpdate(
+    const updatedMessage = await Message.findByIdAndUpdate(
       req.params.id,
       {
         email: req.body.email,
@@ -110,7 +110,7 @@ const updateOrder = async (req, res) => {
 
     res.status(200).json({
       message: "Message updated successfully",
-      updatedOrder,
+      updatedMessage,
     });
   } catch (err) {
     res.status(400).json({
@@ -121,9 +121,9 @@ const updateOrder = async (req, res) => {
 };
 
 module.exports = {
-  createOrder,
-  getOrder,
-  deleteOrder,
-  getOrderById,
-  updateOrder,
+  createMessage,
+  getMessage,
+  deleteMessage,
+  getMessageById,
+  updateMessage,
 };
