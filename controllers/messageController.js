@@ -51,11 +51,11 @@ const createMessage = async (req, res) => {
 // Get all Message Messageings
 const getMessage = async (req, res) => {
   try {
-    const Message = await Message.find();
+    const Messages = await Message.find();
     return res.status(200).json({
       status: "success",
       message: "Messages fetched successfully",
-      data: Message,
+      data: Messages,
     });
   } catch (err) {
     return res.status(400).json({ status: "failed", message: err.message });
@@ -65,8 +65,8 @@ const getMessage = async (req, res) => {
 // Delete Message Messageing
 const deleteMessage = async (req, res) => {
   try {
-    const Message = await Message.findByIdAndDelete(req.params.id);
-    if (!Message) throw Error("Message not found");
+    const Messages = await Message.findByIdAndDelete(req.params.id);
+    if (!Messages) throw Error("Message not found");
     return res.json({ message: "Message deleted successfully" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
