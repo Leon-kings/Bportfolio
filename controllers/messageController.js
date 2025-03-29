@@ -1,129 +1,135 @@
-const Message = require("../models/message.js");
 const nodemailer = require("nodemailer");
-const dotenv = require("dotenv");
+const emailConfig = require("../config/emailConfig");
 
-dotenv.config();
-
-// Configure nodemailer transporter
+// Create transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: emailConfig.service,
+  host: emailConfig.host,
+  port: emailConfig.port,
+  secure: emailConfig.secure,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: emailConfig.auth.user,
+    pass: emailConfig.auth.pass,
   },
 });
 
-// Create Message Messageing
-const createMessage = async (req, res) => {
-  try {
-    const newMessage = await Message.create({
-      email: req.body.email,
-      messages: req.body.messages,
-      name: req.body.name,
-    });
+const messageController = {
+  /**
+   * Send a message to admin email
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  sendMessageToAdmin: async (req, res) => {
+    try {
+      const { name, email, subject, message } = req.body;
 
-    // Send email notification to admin
-    const mailOptions = {
-      from: process.env.EMAIL_USER, // Replace with your email
-      to: process.env.ADMIN_EMAIL, // Replace with admin email
-      subject: "New Message Created",
-      text: `A new Message has been created.\nEmail: ${req.body.email}\nMessage: ${req.body.messages}`,
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Email error:", error);
-      } else {
-        console.log("Email sent:", info.response);
+      // Validate input
+      if (!name || !email || !message) {
+        return res.status(400).json({
+          success: false,
+          message: "Name, email, and message are required",
+        });
       }
-    });
 
-    return res.status(200).json({
-      status: "success",
-      message: "Message created successfully. See you in the upcoming 4 days.",
-      data: newMessage,
-    });
-  } catch (err) {
-    return res.status(400).json({ status: "failed", message: err.message });
-  }
-};
+      // Email options
+      const mailOptions = {
+        from: `"${name}" <${email}>`,
+        to: emailConfig.adminEmail,
+        subject: subject || "New message from contact form",
+        text: message,
+        html: `
+          <h2>New Message from ${name}</h2>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subject:</strong> ${subject || "No subject"}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        `,
+      };
 
-// Get all Message Messageings
-const getMessage = async (req, res) => {
-  try {
-    const Messages = await Message.find();
-    return res.status(200).json({
-      status: "success",
-      message: "Messages fetched successfully",
-      data: Messages,
-    });
-  } catch (err) {
-    return res.status(400).json({ status: "failed", message: err.message });
-  }
-};
+      // Send email
+      await transporter.sendMail(mailOptions);
 
-// Delete Message Messageing
-const deleteMessage = async (req, res) => {
-  try {
-    const Messages = await Message.findByIdAndDelete(req.params.id);
-    if (!Messages) throw Error("Message not found");
-    return res.json({ message: "Message deleted successfully" });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-
-// Get Message by ID
-const getMessageById = async (req, res) => {
-  try {
-    const messages = await Message.findById(req.params.id);
-    res.status(200).json({
-      status: "success",
-      message: "Message fetched successfully",
-      messages,
-    });
-  } catch (error) {
-    res.status(400).json({
-      message: "Oops, sorry, an error occurred while fetching messages.",
-    });
-  }
-};
-
-// Update Message
-const updateMessage = async (req, res) => {
-  try {
-    const message = await Message.findById({ _id: req.params.id });
-    if (!message) {
-      return res.status(404).json({
-        status: "failed",
-        message: "Message not found",
+      res.status(200).json({
+        success: true,
+        message: "Message sent successfully",
+      });
+    } catch (error) {
+      console.error("Error sending email:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to send message",
+        error: error.message,
       });
     }
-    const updatedMessage = await Message.findByIdAndUpdate(
-      req.params.id,
-      {
-        email: req.body.email,
-        message: req.body.message,
-      },
-      { new: true }
-    );
-
-    res.status(200).json({
-      message: "Message updated successfully",
-      updatedMessage,
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: "failed",
-      message: err.message,
-    });
-  }
+  },
+  sendMessageToAdmin: async (req, res) => {
+    try {
+      const { name, email, subject, message } = req.body;
+  
+      // Validate input
+      if (!name || !email || !message) {
+        return res.status(400).json({
+          success: false,
+          message: "Name, email, and message are required",
+        });
+      }
+  
+      // Verify transporter first
+      await transporter.verify();
+  
+      // Email options
+      const mailOptions = {
+        from: `"Portfolio Messages" <no-reply@yourdomain.com>`, // Authorized address
+        replyTo: `"${name}" <${email}>`,
+        to: emailConfig.adminEmail,
+        subject: subject || "New message from Portfolio",
+        text: message,
+        html: `
+          <h2>New Message from ${name}</h2>
+          <p><strong>Email:</strong> ${email}</p>
+          ${subject ? `<p><strong>Subject:</strong> ${subject}</p>` : ''}
+          <p><strong>Message:</strong></p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+        `,
+      };
+  
+      console.log('Sending email with options:', mailOptions);
+  
+      // Send email
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Email sent:', info.response);
+  
+      res.status(200).json({
+        success: true,
+        message: "Message sent successfully",
+      });
+    } catch (error) {
+      console.error("Full email sending error:", {
+        message: error.message,
+        stack: error.stack,
+        response: error.response,
+      });
+      res.status(500).json({
+        success: false,
+        message: "Failed to send message",
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      });
+    }
+  },
+  /**
+   * Verify email connection (optional, can be used during startup)
+   */
+  verifyEmailConnection: async () => {
+    try {
+      await transporter.verify();
+      console.log("Server is ready to send emails");
+    } catch (error) {
+      console.error("Error verifying email connection:", error);
+    }
+  },
 };
 
-module.exports = {
-  createMessage,
-  getMessage,
-  deleteMessage,
-  getMessageById,
-  updateMessage,
-};
+// Verify connection on startup (optional)
+messageController.verifyEmailConnection();
+
+module.exports = messageController;

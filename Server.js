@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const express = require('express');
-const Message = require('./routes/messageRoutes.js');
+const messageRoutes = require('./routes/messageRoutes')
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
   res.status(200).json({ status: 'success', message: 'Welcome to my API' });
 });
 
-app.use('/0998C28', Message);
+app.use('/api/messages', messageRoutes);
 
 // Start the server
 app.listen(PORT, () => console.log(`App started on port ${PORT}`));

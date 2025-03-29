@@ -1,10 +1,7 @@
-const express = require("express");
-const { createMessage , getMessage} = require("../controllers/messageController"); // Destructure correctly
-
+const express = require('express');
 const router = express.Router();
+const messageController = require('../controllers/messageController');
 
-// POST request to create a new message
-router.post("/", createMessage);
-router.get("/", getMessage);
+router.post('/', messageController.sendMessageToAdmin);
 
 module.exports = router;
