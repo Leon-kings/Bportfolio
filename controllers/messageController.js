@@ -30,7 +30,7 @@ const messageController = {
           message: "Name, email, and message are required",
         });
       }
-
+      await req.body.save();
       // Email options
       const mailOptions = {
         from: `"${name}" <${email}>`,
@@ -65,7 +65,7 @@ const messageController = {
   sendMessageToAdmin: async (req, res) => {
     try {
       const { name, email, subject, message } = req.body;
-  
+
       // Validate input
       if (!name || !email || !message) {
         return res.status(400).json({
@@ -73,10 +73,10 @@ const messageController = {
           message: "Name, email, and message are required",
         });
       }
-  
+
       // Verify transporter first
       await transporter.verify();
-  
+
       // Email options
       const mailOptions = {
         from: `"Portfolio Messages" <no-reply@yourdomain.com>`, // Authorized address
@@ -87,18 +87,18 @@ const messageController = {
         html: `
           <h2>New Message from ${name}</h2>
           <p><strong>Email:</strong> ${email}</p>
-          ${subject ? `<p><strong>Subject:</strong> ${subject}</p>` : ''}
+          ${subject ? `<p><strong>Subject:</strong> ${subject}</p>` : ""}
           <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
+          <p>${message.replace(/\n/g, "<br>")}</p>
         `,
       };
-  
-      console.log('Sending email with options:', mailOptions);
-  
+
+      console.log("Sending email with options:", mailOptions);
+
       // Send email
       const info = await transporter.sendMail(mailOptions);
-      console.log('Email sent:', info.response);
-  
+      console.log("Email sent:", info.response);
+
       res.status(200).json({
         success: true,
         message: "Message sent successfully",
@@ -112,7 +112,8 @@ const messageController = {
       res.status(500).json({
         success: false,
         message: "Failed to send message",
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
   },
