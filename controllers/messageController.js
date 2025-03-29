@@ -35,7 +35,7 @@ const messageController = {
       const mailOptions = {
         from: `"${name}" <${email}>`,
         to: emailConfig.adminEmail,
-        subject: subject || "New message from contact form",
+        subject: subject || "New message from PORTFOLIO",
         text: message,
         html: `
           <h2>New Message from ${name}</h2>
