@@ -37,10 +37,10 @@ const messageController = {
   
       // Email options
       const mailOptions = {
-        from: `"Contact Form" <no-reply@yourdomain.com>`, // Authorized address
+        from: `"Portfolio Messages " <no-reply@yourdomain.com>`, // Authorized address
         replyTo: `"${name}" <${email}>`,
         to: emailConfig.adminEmail,
-        subject: subject || "New message from contact form",
+        subject: subject || "New message from Portfolio form",
         text: message,
         html: `
           <h2>New Message from ${name}</h2>
